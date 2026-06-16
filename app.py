@@ -13,10 +13,12 @@ st.markdown("---")
 
 st.header("1. Generate Dataset")
 
-ukuran = st.selectbox("Ukuran Dataset", [100, 1_000, 10_000],
-                      format_func=lambda x: f"{x:,} data")
-jenis  = st.selectbox("Jenis Dataset", ["acak", "terurut", "descending"],
-                      format_func=str.capitalize)
+ukuran = st.selectbox(
+    "Ukuran Dataset", [100, 1_000, 10_000], format_func=lambda x: f"{x:,} data"
+)
+jenis = st.selectbox(
+    "Jenis Dataset", ["acak", "terurut", "descending"], format_func=str.capitalize
+)
 
 if st.button("Generate Dataset"):
     contoh = buat_dataset(ukuran, jenis)
@@ -29,9 +31,10 @@ st.markdown("---")
 
 st.header("2. Pilih Operasi")
 
-operasi   = st.selectbox("Operasi", ["search", "insert", "delete"],
-                         format_func=str.capitalize)
-ulangan   = st.slider("Jumlah Pengulangan", 1, 20, 5)
+operasi = st.selectbox(
+    "Operasi", ["search", "insert", "delete"], format_func=str.capitalize
+)
+ulangan = st.slider("Jumlah Pengulangan", 1, 20, 5)
 
 st.markdown("---")
 
@@ -51,11 +54,10 @@ if st.button("▶ Jalankan Benchmark"):
 
     # Tabel hasil
     df = pd.DataFrame(
-        list(hasil.items()),
-        columns=["Struktur Data", "Waktu Rata-rata (µs)"]
+        list(hasil.items()), columns=["Struktur Data", "Waktu Rata-rata (µs)"]
     )
     df = df.sort_values("Waktu Rata-rata (µs)").reset_index(drop=True)
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")  # ← perbaikan di sini
 
     # Grafik batang bawaan Streamlit
     st.bar_chart(df.set_index("Struktur Data"))
@@ -63,15 +65,19 @@ if st.button("▶ Jalankan Benchmark"):
     # Analisis sederhana
     st.subheader("Analisis")
 
-    tercepat  = df.iloc[0]
+    tercepat = df.iloc[0]
     terlambat = df.iloc[-1]
 
-    st.write(f"✅ **Tercepat**: {tercepat['Struktur Data']} "
-             f"({tercepat['Waktu Rata-rata (µs)']:.4f} µs)")
-    st.write(f"🐢 **Terlambat**: {terlambat['Struktur Data']} "
-             f"({terlambat['Waktu Rata-rata (µs)']:.4f} µs)")
+    st.write(
+        f"✅ **Tercepat**: {tercepat['Struktur Data']} "
+        f"({tercepat['Waktu Rata-rata (µs)']:.4f} µs)"
+    )
+    st.write(
+        f"🐢 **Terlambat**: {terlambat['Struktur Data']} "
+        f"({terlambat['Waktu Rata-rata (µs)']:.4f} µs)"
+    )
 
-    selisih = terlambat['Waktu Rata-rata (µs)'] - tercepat['Waktu Rata-rata (µs)']
+    selisih = terlambat["Waktu Rata-rata (µs)"] - tercepat["Waktu Rata-rata (µs)"]
     st.write(f"📊 Selisih waktu: **{selisih:.4f} µs**")
 
     # Catatan khusus dataset terurut
@@ -88,11 +94,15 @@ st.markdown("---")
 
 st.header("📐 Kompleksitas Algoritma")
 
-df_kompleksitas = pd.DataFrame({
-    "Struktur Data": ["Array/List", "BST",        "Hash Table",  "AVL Tree"],
-    "Search":        ["O(n)",       "O(log n)*",  "O(1)",        "O(log n)"],
-    "Insert":        ["O(1)",       "O(log n)*",  "O(1)",        "O(log n)"],
-    "Delete":        ["O(n)",       "O(log n)*",  "O(1)",        "O(log n)"],
-})
-st.dataframe(df_kompleksitas.set_index("Struktur Data"), use_container_width=True)
+df_kompleksitas = pd.DataFrame(
+    {
+        "Struktur Data": ["Array/List", "BST", "Hash Table", "AVL Tree"],
+        "Search": ["O(n)", "O(log n)*", "O(1)", "O(log n)"],
+        "Insert": ["O(1)", "O(log n)*", "O(1)", "O(log n)"],
+        "Delete": ["O(n)", "O(log n)*", "O(1)", "O(log n)"],
+    }
+)
+st.dataframe(
+    df_kompleksitas.set_index("Struktur Data"), width="stretch"
+)  # ← perbaikan di sini
 st.caption("* BST tidak self-balancing → bisa O(n) pada data terurut.")
