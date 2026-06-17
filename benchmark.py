@@ -65,26 +65,50 @@ class BST:
         return False
 
     def delete(self, nilai):
-        self.akar = self._hapus(self.akar, nilai)
+        """Hapus nilai dari BST secara iteratif untuk menghindari RecursionError."""
+        induk = None
+        sekarang = self.akar
 
-    def _hapus(self, simpul, nilai):
-        if simpul is None:
-            return None
-        if nilai < simpul.nilai:
-            simpul.kiri  = self._hapus(simpul.kiri, nilai)
-        elif nilai > simpul.nilai:
-            simpul.kanan = self._hapus(simpul.kanan, nilai)
+        # Langkah 1: Cari node yang ingin dihapus dan induknya
+        while sekarang and sekarang.nilai != nilai:
+            induk = sekarang
+            if nilai < sekarang.nilai:
+                sekarang = Thermal = sekarang.kiri
+            else:
+                sekarang = sekarang.kanan
+
+        # Jika nilai tidak ditemukan di dalam pohon
+        if sekarang is None:
+            return
+
+        # Langkah 2: Kasus 1 & 2 - Node memiliki 0 atau 1 anak
+        if sekarang.kiri is None or sekarang.kanan is None:
+            if sekarang.kiri is not None:
+                anak = sekarang.kiri
+            else:
+                anak = sekarang.kanan
+
+            if induk is None:
+                self.akar = anak
+            elif sekarang == induk.kiri:
+                induk.kiri = anak
+            else:
+                induk.kanan = anak
+
+        # Langkah 3: Kasus 3 - Node memiliki 2 anak
         else:
-            if simpul.kiri is None:
-                return simpul.kanan
-            if simpul.kanan is None:
-                return simpul.kiri
-            penerus = simpul.kanan
-            while penerus.kiri:
+            induk_penerus = sekarang
+            penerus = sekarang.kanan
+            while penerus.kiri is not None:
+                induk_penerus = penerus
                 penerus = penerus.kiri
-            simpul.nilai = penerus.nilai
-            simpul.kanan = self._hapus(simpul.kanan, penerus.nilai)
-        return simpul
+
+            sekarang.nilai = penerus.nilai
+
+            if induk_penerus.kiri == penerus:
+                induk_penerus.kiri = penerus.kanan
+            else:
+                induk_penerus.kanan = penerus.kanan
 
     @classmethod
     def dari_list(cls, data):
@@ -92,7 +116,6 @@ class BST:
         for nilai in data:
             pohon.insert(nilai)
         return pohon
-
 
 # ── HASH TABLE ───────────────────────────────────────
 
